@@ -1,0 +1,19 @@
+[en]
+CREATE_BOX = Create
+REMOVE_BOX = Remove last used
+BOX_CLASS = Kind
+GOTO_LAST = Go to last used
+USE_NEAREST = Use the nearest box
+BOX_EXIT = Exit
+THERE_IS_NO = There is no boxes here
+UNIQUE = Unique ID: %s
+
+[pl]
+CREATE_BOX = Stworz
+REMOVE_BOX = Usun ostatnio edytowany
+BOX_CLASS = Klasa
+GOTO_LAST = Idz do ostatnio edytowanego
+USE_NEAREST = Edytuj najblizszy
+BOX_EXIT = Wyjdz
+THERE_IS_NO = Nie ma zadnych stref
+UNIQUE = Unikatowe ID: %s

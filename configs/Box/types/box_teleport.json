@@ -1,0 +1,8 @@
+{
+	"type" : "box_teleport",
+	"color":{
+		"r":0,
+		"g":255,
+		"b":0
+	}
+}
