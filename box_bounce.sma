@@ -4,6 +4,8 @@
 #include <fakemeta>
 #include <box_system>
 
+#define FALLOFF 0.3
+
 new const g_szClassname[] = "box_bounce";
 
 public plugin_init()
@@ -34,9 +36,9 @@ stock bounce_player(id)
 
 	get_user_velocity(id, velocity);
 
-	velocity[0] = -velocity[0];
-	velocity[1] = -velocity[1];
-	velocity[2] = -velocity[2];
+	velocity[0] = -velocity[0] * FALLOFF;
+	velocity[1] = -velocity[1] * FALLOFF;
+	velocity[2] = -velocity[2] * FALLOFF;
 
 	set_user_velocity(id, velocity);
 	return PLUGIN_CONTINUE;
