@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <cstrike>
 #include <engine>
+#include <hamsandwich>
 #include <box_system>
 
 new const g_szClassname[] = "box_killzone";
@@ -19,7 +20,7 @@ public box_touch(box, ent, const szClass[])
 		return PLUGIN_CONTINUE
 
 	if(is_user_alive(ent) && cs_get_user_team(ent) == CS_TEAM_CT)
-		user_silentkill(ent);
+		ExecuteHamB(Ham_Killed, ent, 0, 0);
 
 	return PLUGIN_CONTINUE;
 }

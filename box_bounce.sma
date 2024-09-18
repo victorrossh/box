@@ -4,28 +4,33 @@
 #include <fakemeta>
 #include <box_system>
 
-#define FALLOFF 0.3
+#define FALLOFF 0.9
 
-new const g_szClassname[] = "box_bounce";
+new const g_szClassnameAll[] = "box_bounce"; 
+new const g_szClassnameCT[] = "box_bounce_ct";
+new const g_szClassnameT[] = "box_bounce_t";
 
 public plugin_init()
 {
-	register_plugin("Box Bounce Zone", "0.1", "MrShark45");
+	register_plugin("Box Bounce Zone", "0.2", "MrShark45");
 }
 
 public box_touch(box, ent, const szClass[])
 {		
-	if(!equal(szClass, g_szClassname)) 
-		return PLUGIN_CONTINUE;
-		
-	if(!is_user_connected(ent))
+	if(!is_user_connected(ent)) 
 		return PLUGIN_CONTINUE;
 
-	if(is_user_alive(ent) && cs_get_user_team(ent) == CS_TEAM_CT)
-	{
+	if(!is_user_alive(ent))
+		return PLUGIN_CONTINUE;
+
+	new CsTeams:team = cs_get_user_team(ent);
+
+	if(team == CS_TEAM_CT && equal(szClass, g_szClassnameCT)) 
 		bounce_player(ent);
-	}
-		
+	else if(team == CS_TEAM_T && equal(szClass, g_szClassnameT))
+		bounce_player(ent);
+	else if(equal(szClass, g_szClassnameAll))
+		bounce_player(ent);
 
 	return PLUGIN_CONTINUE;
 }
