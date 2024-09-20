@@ -8,7 +8,7 @@ new const g_szClassname[] = "box_godmode";
 
 public plugin_init()
 {
-	register_plugin("Box Kill Zone", "0.1", "MrShark45");
+	register_plugin("Box GodMode", "0.1", "MrShark45");
 }
 
 public box_start_touch(box, ent, const szClass[])
