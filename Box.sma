@@ -63,8 +63,8 @@ public plugin_init()
 	register_dictionary("box_editor.txt");
 	
 	register_menucmd(register_menuid("box"), KEYSBOX|(1<<6), "Pressedbox");
-	register_clcmd("box", "cmdBox", ADMIN_CFG);
-	register_clcmd("boxid", "cmdBoxRename", ADMIN_CFG);
+	register_clcmd("box", "cmdBox", ADMIN_IMMUNITY);
+	register_clcmd("boxid", "cmdBoxRename", ADMIN_IMMUNITY);
 	
 	register_think("box", "Box_Think");
 	
@@ -79,7 +79,7 @@ public plugin_init()
 	fwOnCreate = CreateMultiForward("box_created", ET_STOP, FP_CELL, FP_STRING);
 	fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
 	
-	register_clcmd("radio1", "cmdUndo", ADMIN_CFG);
+	register_clcmd("radio1", "cmdUndo", ADMIN_IMMUNITY);
 }
 
 public plugin_precache()
@@ -129,8 +129,8 @@ refreshMenu(id)
 	client_cmd(id, "box");
 }
 
-public cmdBoxRename(id, level, cid){
-	if(!cmd_access(id, level, cid, 2))
+public cmdBoxRename(id){
+	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
 		return PLUGIN_HANDLED;
 	
 	new iZonesLast = giZonesLast[id];
@@ -151,11 +151,11 @@ public cmdBoxRename(id, level, cid){
 	return PLUGIN_HANDLED;
 }
 
-public cmdBox(id, level, cid)
+public cmdBox(id)
 {
-	if(!cmd_access(id, level, cid, 1))
+	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
 		return PLUGIN_HANDLED;
-		
+
 	BOX_EditorMode( true );
 	
 	new AddKeyBit = 0;
@@ -311,9 +311,8 @@ public Pressedbox(id, key) {
 	refreshMenu(id);
 }
 
-public cmdUndo(id, level, cid)
+public cmdUndo(id)
 {
-	
 	if(pev(id, pev_button) & IN_DUCK == 0 || !gbEditorMode || giZonesLast[id] == -1 )
 		return PLUGIN_CONTINUE;
 		
@@ -321,7 +320,7 @@ public cmdUndo(id, level, cid)
 	if(!pev_valid(ent))
 		return PLUGIN_CONTINUE;
 		
-	if(!cmd_access(id, level, cid, 1))
+	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
 		return PLUGIN_HANDLED;
 		
 	BOX_History_Pop(ent);
