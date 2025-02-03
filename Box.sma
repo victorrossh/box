@@ -6,7 +6,7 @@
 #include <json>
 #include <box_system>
 
-#define DEBUG 1
+#define DEBUG 0
 
 new gszConfigDir[256];
 new gszConfigDirPerMap[256];
