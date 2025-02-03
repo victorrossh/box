@@ -6,7 +6,7 @@
 #include <json>
 #include <box_system>
 
-#define DEBUG 1
+#define DEBUG 0
 
 new gszConfigDir[256];
 new gszConfigDirPerMap[256];
@@ -129,8 +129,8 @@ refreshMenu(id)
 	client_cmd(id, "box");
 }
 
-public cmdBoxRename(id){
-	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
+public cmdBoxRename(id, level, cid){
+	if(!cmd_access(id, level, cid, 2))
 		return PLUGIN_HANDLED;
 	
 	new iZonesLast = giZonesLast[id];
@@ -151,11 +151,11 @@ public cmdBoxRename(id){
 	return PLUGIN_HANDLED;
 }
 
-public cmdBox(id)
+public cmdBox(id, level, cid)
 {
-	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
+	if(!cmd_access(id, level, cid, 1))
 		return PLUGIN_HANDLED;
-
+		
 	BOX_EditorMode( true );
 	
 	new AddKeyBit = 0;
@@ -311,7 +311,7 @@ public Pressedbox(id, key) {
 	refreshMenu(id);
 }
 
-public cmdUndo(id)
+public cmdUndo(id, level, cid)
 {
 	if(pev(id, pev_button) & IN_DUCK == 0 || !gbEditorMode || giZonesLast[id] == -1 )
 		return PLUGIN_CONTINUE;
@@ -320,7 +320,7 @@ public cmdUndo(id)
 	if(!pev_valid(ent))
 		return PLUGIN_CONTINUE;
 		
-	if(!(get_user_flags(id) & ADMIN_IMMUNITY))
+	if(!cmd_access(id, level, cid, 1))
 		return PLUGIN_HANDLED;
 		
 	BOX_History_Pop(ent);
