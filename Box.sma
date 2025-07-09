@@ -4,9 +4,12 @@
 #include <engine>
 #include <xs>
 #include <json>
+#include <sqlx>
+#include <box_globals>
 #include <box_system>
 
-#define DEBUG 0
+#define USE_SQL 1
+#define DEBUG 1
 
 new gszConfigDir[256];
 new gszConfigDirPerMap[256];
@@ -49,13 +52,56 @@ new giMarked[33];
 
 new bool:gbEditorMode = false;
 
+#if !USE_SQL
 #include <box_storage>
+#endif
+
+#include <box_db>
 
 new fwOnStartTouch;
 new fwOnStopTouch;
 new fwOnTouch;
 new fwOnCreate;
 new fwOnDelete;
+
+public LOAD_SETTINGS() {
+	new szFilename[256];
+	get_configsdir(szFilename, charsmax(szFilename));
+	add(szFilename, charsmax(szFilename), "/box.cfg");
+	new iFilePointer = fopen(szFilename, "rt");
+	new szData[256], szKey[32], szValue[256];
+
+	if (iFilePointer) {
+		while (!feof(iFilePointer)) {
+			fgets(iFilePointer, szData, charsmax(szData));
+			trim(szData);
+
+			switch (szData[0]) {
+				case EOS, '#', ';': continue;
+			}
+
+			strtok(szData, szKey, charsmax(szKey), szValue, charsmax(szValue), '=');
+			trim(szKey); trim(szValue);
+
+			if (equal(szKey, "SQL_TYPE")) {
+				copy(g_eSettings[SQL_TYPE], charsmax(g_eSettings[SQL_TYPE]), szValue);
+			}
+			if (equal(szKey, "SQL_HOST")) {
+				copy(g_eSettings[SQL_HOST], charsmax(g_eSettings[SQL_HOST]), szValue);
+			}
+			if (equal(szKey, "SQL_USER")) {
+				copy(g_eSettings[SQL_USER], charsmax(g_eSettings[SQL_USER]), szValue);
+			}
+			if (equal(szKey, "SQL_PASSWORD")) {
+				copy(g_eSettings[SQL_PASSWORD], charsmax(g_eSettings[SQL_PASSWORD]), szValue);
+			}
+			if (equal(szKey, "SQL_DATABASE")) {
+				copy(g_eSettings[SQL_DATABASE], charsmax(g_eSettings[SQL_DATABASE]), szValue);
+			}
+		}
+		fclose(iFilePointer);
+	}
+}
 
 public plugin_init()
 {
@@ -80,6 +126,12 @@ public plugin_init()
 	fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
 	
 	register_clcmd("radio1", "cmdUndo", ADMIN_IMMUNITY);
+
+	#if USE_SQL
+		g_fwdDBLoaded = CreateMultiForward("box_db_loaded", ET_IGNORE);
+		LOAD_SETTINGS();
+		mysql_init();
+	#endif
 }
 
 public plugin_precache()
@@ -96,7 +148,7 @@ public plugin_cfg()
 	copy(gszConfigFile, charsmax(gszConfigFile), gszConfigDir);
 	add(gszConfigFile, charsmax(gszConfigFile), "/Box/types/");
 	giConfigFile = strlen(gszConfigFile);
-	
+
 	
 	new szMapName[32];
 	get_mapname(szMapName, 31);
@@ -109,12 +161,24 @@ public plugin_cfg()
 	
 	Types_LoadList();
 	
-	BOX_Load();
+	#if USE_SQL
+		strtolower(szMapName);
+		DB_LoadMapConfig(szMapName);
+	#else
+		BOX_Load();
+	#endif
 }
 
 public plugin_end()
 {
-	BOX_Save();
+	#if USE_SQL
+		if (g_iSqlTuple != Empty_Handle) {
+			DB_SaveMapConfig();
+			SQL_FreeHandle(g_iSqlTuple);
+		}
+	#else
+		BOX_Save();
+	#endif
 }
 
 public client_putinserver(id)
