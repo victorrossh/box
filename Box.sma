@@ -7,62 +7,16 @@
 #include <sqlx>
 #include <box_globals>
 #include <box_system>
-
-#define USE_SQL 1
-#define DEBUG 1
-
-new gszConfigDir[256];
-new gszConfigDirPerMap[256];
-new gszConfigFile[256+32];
-new giConfigFile;
-
-//Shortcuts
-#define PEV_TYPE 	FAKEMETA_PEV_TYPE
-#define PEV_ID 		FAKEMETA_PEV_ID
-
 #include <box_types>
-
-#define PLUGIN "Box"
-#define VERSION "1.0.2"
-#define AUTHOR "R3X"
-
-#define KEYSBOX (1<<0)|(1<<1)|(1<<2)|(1<<4)|(1<<5)|(1<<8)|(1<<9)
-
-new const gszModel[] = "sprites/cnt1.spr";
-
-#define m_flNextAttack                   83 	//(float) Gametime of nextattack
-
-#define DEFAULT_MINSIZE { -32.0, -32.0, -32.0}
-#define DEFAULT_MAXSIZE { 32.0, 32.0, 32.0}
-
-new giUNIQUE = 1;
-new giZones[512];
-new Array:giZonesHistory[512];
-new giZonesP = 0;
-new giZonesLast[33] = {-1, ...};
-
-new gszType[33] = {-1, ...};
-
-new sprite_line;
-
-new gbInMenu[33];
-new Float:gfDistance[33];
-new giCatched[33];
-new giMarked[33];
-
-new bool:gbEditorMode = false;
+#include <box_db>
 
 #if !USE_SQL
 #include <box_storage>
 #endif
 
-#include <box_db>
-
-new fwOnStartTouch;
-new fwOnStopTouch;
-new fwOnTouch;
-new fwOnCreate;
-new fwOnDelete;
+#define PLUGIN "Box"
+#define VERSION "1.0.2"
+#define AUTHOR "R3X"
 
 public LOAD_SETTINGS() {
 	new szFilename[256];

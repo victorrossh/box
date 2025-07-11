@@ -1,17 +1,65 @@
-#if defined _box_globals_included
-	#endinput
-#endif
-#define _box_globals_included
+// Debug and SQL Configuration
+#define DEBUG 1
+#define USE_SQL 1
 
-// MySQL settings
+// Entity Property Shortcuts
+#define PEV_TYPE    FAKEMETA_PEV_TYPE
+#define PEV_ID      FAKEMETA_PEV_ID
+
+// Menu and Input Configuration
+#define KEYSBOX     (1<<0)|(1<<1)|(1<<2)|(1<<4)|(1<<5)|(1<<8)|(1<<9)
+#define m_flNextAttack                   83  // (float) Gametime of nextattack
+
+// Default Box Size Definitions
+#define DEFAULT_MINSIZE { -32.0, -32.0, -32.0 }
+#define DEFAULT_MAXSIZE { 32.0, 32.0, 32.0 }
+
+// Model Definitions
+new const gszModel[] = "sprites/cnt1.spr";
+
+// Zone Management Variables
+new giUNIQUE = 1;
+new giZones[512];
+new Array:giZonesHistory[512];
+new giZonesP = 0;
+new giZonesLast[33] = {-1, ...};
+new gszType[33] = {-1, ...};
+
+// Sprite and Rendering Variables
+new sprite_line;
+
+// Player Interaction Variables
+new gbInMenu[33];
+new Float:gfDistance[33];
+new giCatched[33];
+new giMarked[33];
+
+// Forward Handles
+new fwOnStartTouch;
+new fwOnStopTouch;
+new fwOnTouch;
+new fwOnCreate;
+new fwOnDelete;
+
+// Storage Variables
+new gszConfigDir[256];
+new gszConfigDirPerMap[256];
+new gszConfigFile[256+32];
+new giConfigFile;
+
+// Editor Mode Control
+new bool:gbEditorMode = false;
+
+// MySQL Settings
 enum Settings {
-	SQL_TYPE[32],
-	SQL_HOST[32],
-	SQL_USER[32],
-	SQL_PASSWORD[32],
-	SQL_DATABASE[32]
+    SQL_TYPE[32],
+    SQL_HOST[32],
+    SQL_USER[32],
+    SQL_PASSWORD[32],
+    SQL_DATABASE[32]
 };
 
 new g_eSettings[Settings];
 new Handle:g_iSqlTuple;
 new g_fwdDBLoaded;
+// ----------------------------------------------------------------------- //
