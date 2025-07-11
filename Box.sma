@@ -15,8 +15,8 @@
 #endif
 
 #define PLUGIN "Box"
-#define VERSION "1.0.2"
-#define AUTHOR "R3X"
+#define VERSION "2.0"
+#define AUTHOR "R3X (Modified by MrShark45 and ftl~)"
 
 public LOAD_SETTINGS() {
 	new szFilename[256];
