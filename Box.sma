@@ -96,7 +96,7 @@ public plugin_precache() {
 public plugin_cfg() {
 	register_dictionary("box_editor.txt");
 
-	get_configsdir( gszConfigDir, charsmax(gszConfigDir) );
+	get_configsdir(gszConfigDir, charsmax(gszConfigDir));
 	
 	copy(gszConfigFile, charsmax(gszConfigFile), gszConfigDir);
 	add(gszConfigFile, charsmax(gszConfigFile), "/Box/types/");
@@ -108,7 +108,7 @@ public plugin_cfg() {
 	copy(gszConfigDirPerMap, charsmax(gszConfigDirPerMap), gszConfigDir);
 	add(gszConfigDirPerMap, charsmax(gszConfigDirPerMap), "/Box/");
 	add(gszConfigDirPerMap, charsmax(gszConfigDirPerMap), szMapName);
-	add(gszConfigDirPerMap, charsmax(gszConfigDirPerMap),  ".json");
+	add(gszConfigDirPerMap, charsmax(gszConfigDirPerMap), ".json");
 	
 	Types_LoadList();
 	
@@ -142,23 +142,23 @@ public refreshMenu(id) {
 }
 
 public cmdBoxRename(id, level, cid) {
-	if(!cmd_access(id, level, cid, 2))
+	if (!cmd_access(id, level, cid, 2))
 		return PLUGIN_HANDLED;
 	
 	new iZonesLast = giZonesLast[id];
 	
-	if(iZonesLast != -1 && giZonesP) {	
+	if (iZonesLast != -1 && giZonesP) {    
 		new szNewId[64];
 		read_args(szNewId, 63);
 		remove_quotes(szNewId);
 		
 		trim(szNewId);
 		
-		if(szNewId[0] != '^0')
+		if (szNewId[0] != '^0')
 			set_pev(giZones[iZonesLast], PEV_ID, szNewId);
 			
 		refreshMenu(id);
-	}		
+	}        
 	return PLUGIN_HANDLED;
 }
 
@@ -296,14 +296,14 @@ public Pressedbox(id, key) {
 }
 
 public cmdUndo(id, level, cid) {
-	if(pev(id, pev_button) & IN_DUCK == 0 || !gbEditorMode || giZonesLast[id] == -1 )
+	if (pev(id, pev_button) & IN_DUCK == 0 || !gbEditorMode || giZonesLast[id] == -1)
 		return PLUGIN_CONTINUE;
 		
-	new ent = giZones[giZonesLast[id]];	
-	if(!pev_valid(ent))
+	new ent = giZones[giZonesLast[id]];    
+	if (!pev_valid(ent))
 		return PLUGIN_CONTINUE;
 		
-	if(!cmd_access(id, level, cid, 1))
+	if (!cmd_access(id, level, cid, 1))
 		return PLUGIN_HANDLED;
 		
 	BOX_History_Pop(ent);
@@ -313,12 +313,12 @@ public cmdUndo(id, level, cid) {
 }
 
 public fwPlayerPreThink(id) {
-	if(gbInMenu[id]) {
-		set_pdata_float(id, m_flNextAttack , 1.0, 5);
+	if (gbInMenu[id]) {
+		set_pdata_float(id, m_flNextAttack, 1.0, 5);
 				
-		if(is_valid_ent(giCatched[id]))
+		if (is_valid_ent(giCatched[id]))
 		{
-			if(pev(id, pev_button)&IN_ATTACK)
+			if (pev(id, pev_button) & IN_ATTACK)
 			{
 				BOX_AnchorMoveProcess(id, giCatched[id]);
 			}
@@ -329,20 +329,21 @@ public fwPlayerPreThink(id) {
 		}
 	}
 }
+
 public fwTraceLine(const Float:v1[], const Float:v2[], fNoMonsters, pentToSkip, ptr) {
-	if(is_user_alive(pentToSkip)) {
+	if (is_user_alive(pentToSkip)) {
 		
-		if(gbInMenu[pentToSkip]) {
+		if (gbInMenu[pentToSkip]) {
 			
 			new ent = get_tr2(ptr, TR_pHit);
 			
-			if(!is_valid_ent(ent)) {
+			if (!is_valid_ent(ent)) {
 				BOX_AnchorMoveUnmark(pentToSkip, giMarked[pentToSkip]);
 				return FMRES_IGNORED;
 			}
 				
-			if(giCatched[pentToSkip]) {
-				if(pev(pentToSkip, pev_button)&IN_ATTACK)
+			if (giCatched[pentToSkip]) {
+				if (pev(pentToSkip, pev_button) & IN_ATTACK)
 					BOX_AnchorMoveProcess(pentToSkip, giCatched[pentToSkip]);
 				else
 					BOX_AnchorMoveUninit(pentToSkip, giCatched[pentToSkip]);
@@ -350,10 +351,9 @@ public fwTraceLine(const Float:v1[], const Float:v2[], fNoMonsters, pentToSkip, 
 			else {
 				new szClass[32];
 				pev(ent, pev_classname, szClass, 31);
-				if(equal(szClass, "box_anchor")) {
-					if(pev(pentToSkip, pev_button)&IN_ATTACK)				
+				if (equal(szClass, "box_anchor")) {
+					if (pev(pentToSkip, pev_button) & IN_ATTACK)                
 						BOX_AnchorMoveInit(pentToSkip, ent);
-
 					else
 						BOX_AnchorMoveMark(pentToSkip, ent);
 				}
@@ -365,17 +365,17 @@ public fwTraceLine(const Float:v1[], const Float:v2[], fNoMonsters, pentToSkip, 
 	return FMRES_IGNORED;
 }
 
-BOX_EditorMode( bool:status = true ) {
-	if(status) {
-		if(gbEditorMode) return;
+BOX_EditorMode(bool:status = true) {
+	if (status) {
+		if (gbEditorMode) return;
 		
-		for(new i=0;i<giZonesP;i++)
+		for (new i = 0; i < giZonesP; i++)
 			BOX_CreateAnchors(giZones[i]);
 	}
 	else {
-		if(!gbEditorMode) return;
+		if (!gbEditorMode) return;
 		
-		for(new i=0;i<giZonesP;i++)
+		for (new i = 0; i < giZonesP; i++)
 		{
 			BOX_RemoveAnchors(giZones[i]);
 		}
@@ -383,16 +383,15 @@ BOX_EditorMode( bool:status = true ) {
 	gbEditorMode = status;
 }
 
-BOX_Add(ent, id) {
+public BOX_Add(ent, id) {
 	giZonesLast[id] = giZonesP;
 	giZones[giZonesP] = ent;
 	giZonesHistory[giZonesP] = ArrayCreate(3);
-
 	giZonesP++;
 }
 
-BOX_Remove( num, id = 0) {
-	if(giZonesLast[id] != -1 && giZonesP) {
+BOX_Remove(num, id = 0) {
+	if (giZonesLast[id] != -1 && giZonesP) {
 		new ent = giZones[num];
 		
 		new iZonesLast = giZonesLast[id];
@@ -401,10 +400,10 @@ BOX_Remove( num, id = 0) {
 		
 		new Array:history = giZonesHistory[iZonesLast];
 		giZonesHistory[iZonesLast] = giZonesHistory[giZonesP];
-		ArrayDestroy(history);	
+		ArrayDestroy(history);   
 		
 		new szClass[32];
-		pev(ent,PEV_TYPE, szClass, 31);
+		pev(ent, PEV_TYPE, szClass, 31);
 		
 		new iRet;
 		ExecuteForward(fwOnDelete, iRet, ent, szClass);
@@ -418,22 +417,21 @@ BOX_Remove( num, id = 0) {
 	}
 }
 
-BOX_GetEntIndex(ent) {
-	for(new i=0;i<giZonesP;i++)
+public BOX_GetEntIndex(ent) {
+	for (new i = 0; i < giZonesP; i++)
 	{
-		if(giZones[i] == ent)
+		if (giZones[i] == ent)
 		{
 			return i;
 		}
 	}
-	
 	return -1;
 }
 
-BOX_History_Push(ent) {
+public BOX_History_Push(ent) {
 	new index = BOX_GetEntIndex(ent);
 	
-	if(index == -1) return;
+	if (index == -1) return;
 	
 	new Array:history = giZonesHistory[index];
 	
@@ -446,10 +444,10 @@ BOX_History_Push(ent) {
 	ArrayPushArray(history, fVec);
 }
 
-BOX_History_Pop(ent) {
+public BOX_History_Pop(ent) {
 	new index = BOX_GetEntIndex(ent);
 	
-	if(index == -1) return 0;
+	if (index == -1) return 0;
 	
 	new Float:fMins[3];
 	new Float:fMaxs[3];
@@ -458,27 +456,27 @@ BOX_History_Pop(ent) {
 	
 	new iSize = ArraySize(history);
 
-	if(iSize < 2) return 0;
+	if (iSize < 2) return 0;
 	
 	ArrayGetArray(history, iSize-1, fMaxs);
 	ArrayGetArray(history, iSize-2, fMins);
 	
 	ArrayDeleteItem(history, --iSize);
-	ArrayDeleteItem(history, --iSize);	
+	ArrayDeleteItem(history, --iSize);    
 	
 	BOX_UpdateSize(ent, fMaxs, fMins);
 	
 	return 1;
 }
 
-BOX_Create( const szClass[], const szId[], const Float:fOrigin[3], const Float:fMins[3] = DEFAULT_MINSIZE, const Float:fMaxs[3] = DEFAULT_MAXSIZE , editor = 0) {
+BOX_Create(const szClass[], const szId[], const Float:fOrigin[3], const Float:fMins[3] = DEFAULT_MINSIZE, const Float:fMaxs[3] = DEFAULT_MAXSIZE, editor = 0) {
 	new ent = create_entity("info_target");
 	
 	entity_set_string(ent, EV_SZ_classname, "box");
 	set_pev(ent, PEV_TYPE, szClass);
 	
 	new szActualId[32];
-	if(szId[0] == '^0') {
+	if (szId[0] == '^0') {
 		formatex(szActualId, 31, "Box#%d", (giUNIQUE));
 		set_pev(ent, PEV_ID, szActualId);
 	}
@@ -508,7 +506,7 @@ BOX_Create( const szClass[], const szId[], const Float:fOrigin[3], const Float:f
 	return ent;
 }
 
-BOX_CreateAnchors(ent) {
+public BOX_CreateAnchors(ent) {
 	new Float:fMins[3], Float:fMaxs[3];
 	pev(ent, pev_absmin, fMins);
 	pev(ent, pev_absmax, fMaxs);
@@ -523,12 +521,12 @@ BOX_CreateAnchors(ent) {
 	BOX_CreateAnchorsEntity(ent, 0b111, fMaxs[0], fMaxs[1], fMaxs[2]);
 }
 
-BOX_GetAnchor(box, num) {
+public BOX_GetAnchor(box, num) {
 	new ent = 0;
 	new a = -1;
-	while((a = find_ent_by_owner(a, "box_anchor", box)))
+	while ((a = find_ent_by_owner(a, "box_anchor", box)))
 	{
-		if(pev(a, pev_iuser4) == num)
+		if (pev(a, pev_iuser4) == num)
 		{
 			ent = a;
 			break;
@@ -537,10 +535,10 @@ BOX_GetAnchor(box, num) {
 	return ent;
 }
 
-BOX_UpdateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {
-	new ent = BOX_GetAnchor(box,  num);
+public BOX_UpdateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {
+	new ent = BOX_GetAnchor(box, num);
 	
-	if(is_valid_ent(ent)) {
+	if (is_valid_ent(ent)) {
 		new Float:fOrigin[3];
 		fOrigin[0] = x;
 		fOrigin[1] = y;
@@ -550,7 +548,7 @@ BOX_UpdateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {
 	}
 }
 
-BOX_CreateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {	
+public BOX_CreateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {    
 	new Float:fOrigin[3];
 	fOrigin[0] = x;
 	fOrigin[1] = y;
@@ -575,16 +573,16 @@ BOX_CreateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {
 	set_rendering(ent, kRenderFxPulseFast, 0, 150, 0, kRenderTransAdd, 255);
 }
 
-BOX_RemoveAnchors(box) {
+public BOX_RemoveAnchors(box) {
 	new ent = -1;
-	while((ent = find_ent_by_owner(ent, "box_anchor", box)))
+	while ((ent = find_ent_by_owner(ent, "box_anchor", box)))
 	{
 		remove_entity(ent);
 	}
 }
 
-BOX_AnchorMoveProcess(id, ent) {
-	if(giCatched[id] != ent)
+public BOX_AnchorMoveProcess(id, ent) {
+	if (giCatched[id] != ent)
 		BOX_AnchorMoveInit(id, ent);
 	
 	new Float:fVec[3];
@@ -602,7 +600,7 @@ BOX_AnchorMoveProcess(id, ent) {
 	xs_vec_add(fOrigin, fView, fOrigin);
 	xs_vec_add(fOrigin, fVec, fVec);
 	
-	set_pev(ent, pev_origin, fVec);	
+	set_pev(ent, pev_origin, fVec);    
 	
 	new box = pev(ent, pev_owner);
 	new num1 = pev(ent, pev_iuser4);
@@ -648,17 +646,17 @@ BOX_UpdateSize(box, const Float:fVec[3], const Float:fVec2[3], anchor = -1) {
 	entity_set_size(box, fMins, fMaxs);
 }
 
-BOX_AnchorMoveMark(id, ent) {
+public BOX_AnchorMoveMark(id, ent) {
 	giMarked[id] = ent;
 	set_pev(ent, pev_scale, 0.35);
 }
 
-BOX_AnchorMoveUnmark(id, ent) {
+public BOX_AnchorMoveUnmark(id, ent) {
 	giMarked[id] = 0;
 	set_pev(ent, pev_scale, 0.25);
 }
 
-BOX_AnchorMoveInit(id, ent) {
+public BOX_AnchorMoveInit(id, ent) {
 	static szClass[32];
 	
 	gfDistance[id] = entity_range(id, ent);
@@ -668,12 +666,11 @@ BOX_AnchorMoveInit(id, ent) {
 	
 	
 	new box = pev(ent, pev_owner);
-	for(new i = 0; i < giZonesP; i++)
+	for (new i = 0; i < giZonesP; i++)
 	{
-		if(giZones[i] == box)
+		if (giZones[i] == box)
 		{
 			giZonesLast[id] = i;
-			
 			
 			pev(box, PEV_TYPE, szClass, 31);
 			gszType[id] = getTypeId(szClass);
@@ -682,38 +679,38 @@ BOX_AnchorMoveInit(id, ent) {
 		}
 	}
 	
-	BOX_History_Push( pev(ent, pev_owner) );
+	BOX_History_Push(pev(ent, pev_owner));
 }
 
-BOX_AnchorMoveUninit(id, ent) {	
+public BOX_AnchorMoveUninit(id, ent) {    
 	gfDistance[id] = 0.0;
 	giCatched[id] = 0;
 	
 	set_rendering(ent, kRenderFxNone, 0, 150, 0, kRenderTransAdd, 255);
 }
 
-_Box_Think(ent) {
+public _Box_Think(ent) {
 	new Float:fMins[3], Float:fMaxs[3];
 	pev(ent, pev_absmin, fMins);
 	pev(ent, pev_absmax, fMaxs);
 	
-	_Create_Line( ent, fMaxs[0], fMaxs[1], fMaxs[2], fMaxs[0], fMaxs[1], fMins[2] );
-	_Create_Line( ent, fMins[0], fMaxs[1], fMaxs[2], fMins[0], fMaxs[1], fMins[2] );
-	_Create_Line( ent, fMaxs[0], fMins[1], fMaxs[2], fMaxs[0], fMins[1], fMins[2] );
-	_Create_Line( ent, fMins[0], fMins[1], fMaxs[2], fMins[0], fMins[1], fMins[2] );
+	_Create_Line(ent, fMaxs[0], fMaxs[1], fMaxs[2], fMaxs[0], fMaxs[1], fMins[2]);
+	_Create_Line(ent, fMins[0], fMaxs[1], fMaxs[2], fMins[0], fMaxs[1], fMins[2]);
+	_Create_Line(ent, fMaxs[0], fMins[1], fMaxs[2], fMaxs[0], fMins[1], fMins[2]);
+	_Create_Line(ent, fMins[0], fMins[1], fMaxs[2], fMins[0], fMins[1], fMins[2]);
 	
-	_Create_Line( ent, fMaxs[0], fMaxs[1], fMaxs[2], fMins[0], fMaxs[1], fMaxs[2] );
-	_Create_Line( ent, fMaxs[0], fMaxs[1], fMins[2], fMins[0], fMaxs[1], fMins[2] );
-	_Create_Line( ent, fMaxs[0], fMins[1], fMaxs[2], fMins[0], fMins[1], fMaxs[2] );
-	_Create_Line( ent, fMaxs[0], fMins[1], fMins[2], fMins[0], fMins[1], fMins[2] );
+	_Create_Line(ent, fMaxs[0], fMaxs[1], fMaxs[2], fMins[0], fMaxs[1], fMaxs[2]);
+	_Create_Line(ent, fMaxs[0], fMaxs[1], fMins[2], fMins[0], fMaxs[1], fMins[2]);
+	_Create_Line(ent, fMaxs[0], fMins[1], fMaxs[2], fMins[0], fMins[1], fMaxs[2]);
+	_Create_Line(ent, fMaxs[0], fMins[1], fMins[2], fMins[0], fMins[1], fMins[2]);
 	
-	_Create_Line( ent, fMaxs[0], fMaxs[1], fMaxs[2], fMaxs[0], fMins[1], fMaxs[2] );
-	_Create_Line( ent, fMins[0], fMaxs[1], fMaxs[2], fMins[0], fMins[1], fMaxs[2] );
-	_Create_Line( ent, fMaxs[0], fMaxs[1], fMins[2], fMaxs[0], fMins[1], fMins[2] );
-	_Create_Line( ent, fMins[0], fMaxs[1], fMins[2], fMins[0], fMins[1], fMins[2] );
+	_Create_Line(ent, fMaxs[0], fMaxs[1], fMaxs[2], fMaxs[0], fMins[1], fMaxs[2]);
+	_Create_Line(ent, fMins[0], fMaxs[1], fMaxs[2], fMins[0], fMins[1], fMaxs[2]);
+	_Create_Line(ent, fMaxs[0], fMaxs[1], fMins[2], fMaxs[0], fMins[1], fMins[2]);
+	_Create_Line(ent, fMins[0], fMaxs[1], fMins[2], fMins[0], fMins[1], fMins[2]);
 	
 	
-	_Create_Line( ent, fMins[0], fMins[1], fMins[2], fMaxs[0], fMaxs[1], fMaxs[2] );
+	_Create_Line(ent, fMins[0], fMins[1], fMins[2], fMaxs[0], fMaxs[1], fMaxs[2]);
 }
 
 public Box_Think(ent) {
@@ -721,7 +718,7 @@ public Box_Think(ent) {
 	set_pev(ent, pev_nextthink, get_gametime()+0.3);
 }
 
-_Create_Line(ent, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) {
+public _Create_Line(ent, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) {
 	new Float:start[3];
 	start[0] = x1;
 	start[1] = y1;
@@ -735,8 +732,7 @@ _Create_Line(ent, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) {
 	Create_Line(ent, start, stop);
 }
 
-
-Create_Line(ent, Float:start[], Float:stop[]) {
+public Create_Line(ent, Float:start[], Float:stop[]) {
 	new iColor[3];
 	getTypeColor(ent, iColor);
 	
@@ -754,15 +750,15 @@ Create_Line(ent, Float:start[], Float:stop[]) {
 	write_byte(5);
 	write_byte(7);
 	write_byte(0);
-	write_byte(iColor[0]);		// RED
-	write_byte(iColor[1]);		// GREEN
-	write_byte(iColor[2]);		// BLUE		
-	write_byte(250);			// brightness
+	write_byte(iColor[0]);         // RED
+	write_byte(iColor[1]);         // GREEN
+	write_byte(iColor[2]);         // BLUE        
+	write_byte(250);               // brightness
 	write_byte(5);
 	message_end();
 }
 
-Create_Implode(ent) {
+public Create_Implode(ent) {
 	new Float:fOrigin[3];
 	pev(ent, pev_origin, fOrigin);
 	
@@ -777,12 +773,12 @@ Create_Implode(ent) {
 	message_end();
 }
 
-getBoxFromTaskId(tid, &box, &ent) {
+public getBoxFromTaskId(tid, &box, &ent) {
 	ent = tid&0xFFFF;
 	box = (tid&0xFFFF0000) >> 16;
 }
 
-getTaskIdFormBox(box, ent) {
+public getTaskIdFormBox(box, ent) {
 	return ((box<<16) | ent);
 }
 
@@ -798,7 +794,7 @@ public fwBoxTouch(box, ent) {
 	
 	new tid = getTaskIdFormBox(box, ent);
 	
-	if(task_exists(tid))
+	if (task_exists(tid))
 		remove_task(tid);
 	else
 		fwStartTouch(box, ent);
@@ -806,44 +802,43 @@ public fwBoxTouch(box, ent) {
 	set_task(0.1, "taskInTouch", tid);
 }
 
-
-fwStartTouch(box, ent) {
-	if(gbEditorMode)
+public fwStartTouch(box, ent) {
+	if (gbEditorMode)
 		return;
 	
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if(!ExecuteForward(fwOnStartTouch, iRet, box, ent, szClass))
+	if (!ExecuteForward(fwOnStartTouch, iRet, box, ent, szClass))
 	{
 		
 	}
 }
 
-fwStopTouch(box, ent) {
-	if(gbEditorMode)
+public fwStopTouch(box, ent) {
+	if (gbEditorMode)
 		return;
 		
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if(!ExecuteForward(fwOnStopTouch, iRet ,box, ent, szClass))
+	if (!ExecuteForward(fwOnStopTouch, iRet, box, ent, szClass))
 	{
 		
 	}
 }
 
-fwTouch(box, ent) {
-	if(gbEditorMode)
+public fwTouch(box, ent) {
+	if (gbEditorMode)
 		return;
 		
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if(!ExecuteForward(fwOnTouch, iRet ,box, ent, szClass))
+	if (!ExecuteForward(fwOnTouch, iRet, box, ent, szClass))
 	{
 		
 	}
