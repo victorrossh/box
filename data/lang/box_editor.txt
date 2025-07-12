@@ -1,19 +1,19 @@
 [en]
-CREATE_BOX = Create
-REMOVE_BOX = Remove last used
-BOX_CLASS = Kind
-GOTO_LAST = Go to last used
-USE_NEAREST = Use the nearest box
-BOX_EXIT = Exit
+CREATE_BOX = \wCreate
+REMOVE_BOX = \wRemove last used
+BOX_CLASS = \wKind
+GOTO_LAST = \wGo to last used
+USE_NEAREST = \wUse the nearest box
+BOX_EXIT = \wExit
 THERE_IS_NO = There is no boxes here
-UNIQUE = Unique ID: %s
+UNIQUE = \wUnique ID: %s
 
 [pl]
-CREATE_BOX = Stworz
-REMOVE_BOX = Usun ostatnio edytowany
-BOX_CLASS = Klasa
-GOTO_LAST = Idz do ostatnio edytowanego
-USE_NEAREST = Edytuj najblizszy
-BOX_EXIT = Wyjdz
+CREATE_BOX = \wStworz
+REMOVE_BOX = \wUsun ostatnio edytowany
+BOX_CLASS = \wKlasa
+GOTO_LAST = \wIdz do ostatnio edytowanego
+USE_NEAREST = \wEdytuj najblizszy
+BOX_EXIT = \wWyjdz
 THERE_IS_NO = Nie ma zadnych stref
-UNIQUE = Unikatowe ID: %s
+UNIQUE = \wUnikatowe ID: %s
