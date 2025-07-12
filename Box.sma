@@ -192,7 +192,7 @@ public cmdBox(id, level, cid) {
 	if (giZonesLast[id] != -1 && giZonesP) {
 		new szId[32];
 		pev(giZones[giZonesLast[id]], PEV_ID, szId, 31);
-		formatex(szMenu, charsmax(szMenu), "%s\r7. %L^n", szMenu, id, "UNIQUE", szId);
+		formatex(szMenu, charsmax(szMenu), "%s\r7. %L^n^n", szMenu, id, "UNIQUE", szId);
 		AddKeyBit |= (1<<6);
 	}
 	
@@ -218,13 +218,11 @@ public Pressedbox(id, key) {
 		case 1: BOX_Remove(giZonesLast[id], id);
 
 		case 2: {
-			if (giTypes >= 0)
-			{
+			if (giTypes >= 0) {
 				gszType[id]++;
 				if (gszType[id] >= giTypes + 1)
 					gszType[id] = -1;
-				if (giZonesLast[id] != -1)
-				{
+				if (giZonesLast[id] != -1) {
 					new ent = giZones[giZonesLast[id]];
 					new iRet;
 					new szClass[32];
@@ -238,8 +236,7 @@ public Pressedbox(id, key) {
 		}
 
 		case 4: {
-			if (giZonesLast[id] != -1 && giZonesP)
-			{
+			if (giZonesLast[id] != -1 && giZonesP) {
 				new ent = giZones[giZonesLast[id]];
 				new Float:fOrigin[3];
 				pev(ent, pev_origin, fOrigin);
@@ -249,23 +246,19 @@ public Pressedbox(id, key) {
 
 		case 5: {
 			if (!giZonesP)
-				client_print(id, print_chat, "%L", id, "THERE_IS_NO");
-			else
-			{
+				client_print_color(id, print_chat, "%L", id, "THERE_IS_NO");
+			else {
 				new iNearest = -1;
 				new Float:fNearestDistance = 9999999.0;
 				new Float:fDistance;
-				for (new i = 0; i < giZonesP; i++)
-				{
+				for (new i = 0; i < giZonesP; i++) {
 					fDistance = entity_range(id, giZones[i]);
-					if (fDistance < fNearestDistance)
-					{
+					if (fDistance < fNearestDistance) {
 						fNearestDistance = fDistance;
 						iNearest = i;
 					}
 				}
-				if (iNearest >= 0)
-				{
+				if (iNearest >= 0) {
 					new szClass[32];
 					pev(giZones[iNearest], PEV_TYPE, szClass, 31);
 					gszType[id] = getTypeId(szClass);
@@ -316,16 +309,11 @@ public fwPlayerPreThink(id) {
 	if (gbInMenu[id]) {
 		set_pdata_float(id, m_flNextAttack, 1.0, 5);
 				
-		if (is_valid_ent(giCatched[id]))
-		{
+		if (is_valid_ent(giCatched[id])) {
 			if (pev(id, pev_button) & IN_ATTACK)
-			{
 				BOX_AnchorMoveProcess(id, giCatched[id]);
-			}
 			else
-			{
 				BOX_AnchorMoveUninit(id, giCatched[id]);
-			}
 		}
 	}
 }
@@ -375,8 +363,7 @@ BOX_EditorMode(bool:status = true) {
 	else {
 		if (!gbEditorMode) return;
 		
-		for (new i = 0; i < giZonesP; i++)
-		{
+		for (new i = 0; i < giZonesP; i++) {
 			BOX_RemoveAnchors(giZones[i]);
 		}
 	}
@@ -420,10 +407,7 @@ BOX_Remove(num, id = 0) {
 public BOX_GetEntIndex(ent) {
 	for (new i = 0; i < giZonesP; i++)
 	{
-		if (giZones[i] == ent)
-		{
-			return i;
-		}
+		if (giZones[i] == ent) return i;
 	}
 	return -1;
 }
@@ -526,8 +510,7 @@ public BOX_GetAnchor(box, num) {
 	new a = -1;
 	while ((a = find_ent_by_owner(a, "box_anchor", box)))
 	{
-		if (pev(a, pev_iuser4) == num)
-		{
+		if (pev(a, pev_iuser4) == num) {
 			ent = a;
 			break;
 		}
@@ -575,8 +558,7 @@ public BOX_CreateAnchorsEntity(box, num, Float:x, Float:y, Float:z) {
 
 public BOX_RemoveAnchors(box) {
 	new ent = -1;
-	while ((ent = find_ent_by_owner(ent, "box_anchor", box)))
-	{
+	while ((ent = find_ent_by_owner(ent, "box_anchor", box))) {
 		remove_entity(ent);
 	}
 }
@@ -666,10 +648,8 @@ public BOX_AnchorMoveInit(id, ent) {
 	
 	
 	new box = pev(ent, pev_owner);
-	for (new i = 0; i < giZonesP; i++)
-	{
-		if (giZones[i] == box)
-		{
+	for (new i = 0; i < giZonesP; i++) {
+		if (giZones[i] == box) {
 			giZonesLast[id] = i;
 			
 			pev(box, PEV_TYPE, szClass, 31);
@@ -803,43 +783,35 @@ public fwBoxTouch(box, ent) {
 }
 
 public fwStartTouch(box, ent) {
-	if (gbEditorMode)
-		return;
+	if (gbEditorMode) return;
 	
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if (!ExecuteForward(fwOnStartTouch, iRet, box, ent, szClass))
-	{
+	if (!ExecuteForward(fwOnStartTouch, iRet, box, ent, szClass)) {
 		
 	}
 }
 
 public fwStopTouch(box, ent) {
-	if (gbEditorMode)
-		return;
+	if (gbEditorMode) return;
 		
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if (!ExecuteForward(fwOnStopTouch, iRet, box, ent, szClass))
-	{
-		
+	if (!ExecuteForward(fwOnStopTouch, iRet, box, ent, szClass)) {	
 	}
 }
 
 public fwTouch(box, ent) {
-	if (gbEditorMode)
-		return;
+	if (gbEditorMode) return;
 		
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new iRet;
-	if (!ExecuteForward(fwOnTouch, iRet, box, ent, szClass))
-	{
-		
+	if (!ExecuteForward(fwOnTouch, iRet, box, ent, szClass)) {	
 	}
 }
