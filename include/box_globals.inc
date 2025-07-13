@@ -1,6 +1,9 @@
 // Debug and SQL Configuration
 #define DEBUG 1
-#define USE_SQL 1
+#define USE_SQL 1 // Set the data saving mode: use 1 for SQL or 0 for .json file
+
+// Entity Limits
+#define MAX_ENTITIES 512
 
 // Entity Property Shortcuts
 #define PEV_TYPE    FAKEMETA_PEV_TYPE
@@ -14,13 +17,16 @@
 #define DEFAULT_MINSIZE { -32.0, -32.0, -32.0 }
 #define DEFAULT_MAXSIZE { 32.0, 32.0, 32.0 }
 
+// Touch Detection Variables
+new gbTouchActive[MAX_PLAYERS + 1][MAX_ENTITIES];
+
 // Model Definitions
 new const gszModel[] = "sprites/cnt1.spr";
 
 // Zone Management Variables
 new giUNIQUE = 1;
-new giZones[512];
-new Array:giZonesHistory[512];
+new giZones[MAX_ENTITIES];
+new Array:giZonesHistory[MAX_ENTITIES];
 new giZonesP = 0;
 new giZonesLast[33] = {-1, ...};
 new gszType[33] = {-1, ...};

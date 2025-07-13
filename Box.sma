@@ -89,7 +89,6 @@ public plugin_init() {
 
 public plugin_precache() {
 	precache_model(gszModel);
-	
 	sprite_line = precache_model("sprites/white.spr");
 }
 
@@ -135,6 +134,9 @@ public client_putinserver(id) {
 	gbInMenu[id] = false;
 	giCatched[id] = 0;
 	giMarked[id] = 0;
+
+	for (new i = 0; i < MAX_ENTITIES; i++)
+		gbTouchActive[id][i] = 0;
 }
 
 public refreshMenu(id) {
@@ -646,7 +648,6 @@ public BOX_AnchorMoveInit(id, ent) {
 	
 	set_rendering(ent, kRenderFxGlowShell, 255, 0, 0, kRenderTransAdd, 255);
 	
-	
 	new box = pev(ent, pev_owner);
 	for (new i = 0; i < giZonesP; i++) {
 		if (giZones[i] == box) {
@@ -688,7 +689,6 @@ public _Box_Think(ent) {
 	_Create_Line(ent, fMins[0], fMaxs[1], fMaxs[2], fMins[0], fMins[1], fMaxs[2]);
 	_Create_Line(ent, fMaxs[0], fMaxs[1], fMins[2], fMaxs[0], fMins[1], fMins[2]);
 	_Create_Line(ent, fMins[0], fMaxs[1], fMins[2], fMins[0], fMins[1], fMins[2]);
-	
 	
 	_Create_Line(ent, fMins[0], fMins[1], fMins[2], fMaxs[0], fMaxs[1], fMaxs[2]);
 }
@@ -762,56 +762,71 @@ public getTaskIdFormBox(box, ent) {
 	return ((box<<16) | ent);
 }
 
-public taskInTouch(tid) {
-	new box, ent;
-	getBoxFromTaskId(tid, box, ent);
-	
-	fwStopTouch(box, ent);
-}
-
 public fwBoxTouch(box, ent) {
-	fwTouch(box, ent);
-	
-	new tid = getTaskIdFormBox(box, ent);
-	
-	if (task_exists(tid))
-		remove_task(tid);
-	else
-		fwStartTouch(box, ent);
-
-	set_task(0.1, "taskInTouch", tid);
-}
-
-public fwStartTouch(box, ent) {
 	if (gbEditorMode) return;
-	
+
+	#if DEBUG
+		server_print("[DEBUG] fwBoxTouch called for box %d, ent %d", box, ent);
+	#endif
+
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
-	new iRet;
-	if (!ExecuteForward(fwOnStartTouch, iRet, box, ent, szClass)) {
-		
+	new id = ent;
+	if (id <= 0 || id > MAX_PLAYERS) {
+		#if DEBUG
+			server_print("[DEBUG] Invalid player ID %d", id);
+		#endif
+		return;
 	}
+
+	// Check if it is the beginning of the touch
+	if (!gbTouchActive[id][box]) {
+		gbTouchActive[id][box] = 1;
+		new iRet;
+		if (!ExecuteForward(fwOnStartTouch, iRet, box, id, szClass)) {
+		}
+		#if DEBUG
+			server_print("[DEBUG] Starting touch for box %d, type %s", box, szClass);
+		#endif
+	}
+
+	new iRet;
+	if (!ExecuteForward(fwOnTouch, iRet, box, id, szClass)) {
+	}
+	#if DEBUG
+		server_print("[DEBUG] Touching box %d, type %s", box, szClass);
+	#endif
+
+	if (!is_valid_ent(box) || !is_user_alive(id)) {
+		gbTouchActive[id][box] = 0;
+		new iRetStop;
+		#if DEBUG
+			server_print("[DEBUG] Stopping touch for box %d", box);
+		#endif
+		if (!ExecuteForward(fwOnStopTouch, iRetStop, box, id, szClass)) {
+		}
+	}
+}
+
+/*
+public fwStartTouch(box, ent) {
+	if (gbEditorMode) return;
+	#if defined DEBUG
+		server_print("[DEBUG] fwStartTouch called for box %d, ent %d", box, ent);
+	#endif
 }
 
 public fwStopTouch(box, ent) {
 	if (gbEditorMode) return;
-		
-	new szClass[32];
-	pev(box, PEV_TYPE, szClass, 31);
-	
-	new iRet;
-	if (!ExecuteForward(fwOnStopTouch, iRet, box, ent, szClass)) {	
-	}
+	#if defined DEBUG
+		server_print("[DEBUG] fwStopTouch called for box %d, ent %d", box, ent);
+	#endif
 }
 
 public fwTouch(box, ent) {
 	if (gbEditorMode) return;
-		
-	new szClass[32];
-	pev(box, PEV_TYPE, szClass, 31);
-	
-	new iRet;
-	if (!ExecuteForward(fwOnTouch, iRet, box, ent, szClass)) {	
-	}
-}
+	#if defined DEBUG
+		server_print("[DEBUG] fwTouch called for box %d, ent %d", box, ent);
+	#endif
+}*/
