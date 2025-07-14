@@ -1,5 +1,4 @@
-// Debug and SQL Configuration
-#define DEBUG 1
+// SQL Configuration
 #define USE_SQL 1 // Set the data saving mode: use 1 for SQL or 0 for .json file
 
 // Entity Limits
@@ -16,6 +15,9 @@
 // Default Box Size Definitions
 #define DEFAULT_MINSIZE { -32.0, -32.0, -32.0 }
 #define DEFAULT_MAXSIZE { 32.0, 32.0, 32.0 }
+
+// Debug
+new g_bDebugMode;
 
 // Touch Detection Variables
 new gbTouchActive[MAX_PLAYERS + 1][MAX_ENTITIES];
@@ -58,11 +60,11 @@ new bool:gbEditorMode = false;
 
 // MySQL Settings
 enum Settings {
-    SQL_TYPE[32],
-    SQL_HOST[32],
-    SQL_USER[32],
-    SQL_PASSWORD[32],
-    SQL_DATABASE[32]
+	SQL_TYPE[32],
+	SQL_HOST[32],
+	SQL_USER[32],
+	SQL_PASSWORD[32],
+	SQL_DATABASE[32]
 };
 
 new g_eSettings[Settings];

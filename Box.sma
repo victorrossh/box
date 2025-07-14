@@ -64,6 +64,7 @@ public plugin_init() {
 
 	register_clcmd("box", "cmdBox", ADMIN_IMMUNITY);
 	register_clcmd("boxid", "cmdBoxRename", ADMIN_IMMUNITY);
+	register_clcmd("radio1", "cmdUndo", ADMIN_IMMUNITY);
 	
 	register_think("box", "Box_Think");
 	
@@ -77,8 +78,8 @@ public plugin_init() {
 	fwOnTouch = CreateMultiForward("box_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
 	fwOnCreate = CreateMultiForward("box_created", ET_STOP, FP_CELL, FP_STRING);
 	fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
-	
-	register_clcmd("radio1", "cmdUndo", ADMIN_IMMUNITY);
+
+	g_bDebugMode = bool:(plugin_flags() & AMX_FLAG_DEBUG);
 
 	#if USE_SQL
 		g_fwdDBLoaded = CreateMultiForward("box_db_loaded", ET_IGNORE);
@@ -585,6 +586,8 @@ public BOX_AnchorMoveProcess(id, ent) {
 	xs_vec_add(fOrigin, fVec, fVec);
 	
 	set_pev(ent, pev_origin, fVec);    
+	if(g_bDebugMode)
+		server_print("[DEBUG] BOX_AnchorMoveProcess: Moved anchor %d to (%f, %f, %f)", ent, fVec[0], fVec[1], fVec[2]);
 	
 	new box = pev(ent, pev_owner);
 	new num1 = pev(ent, pev_iuser4);
@@ -765,18 +768,16 @@ public getTaskIdFormBox(box, ent) {
 public fwBoxTouch(box, ent) {
 	if (gbEditorMode) return;
 
-	#if DEBUG
+	if (g_bDebugMode)
 		server_print("[DEBUG] fwBoxTouch called for box %d, ent %d", box, ent);
-	#endif
 
 	new szClass[32];
 	pev(box, PEV_TYPE, szClass, 31);
 	
 	new id = ent;
 	if (id <= 0 || id > MAX_PLAYERS) {
-		#if DEBUG
+		if (g_bDebugMode)
 			server_print("[DEBUG] Invalid player ID %d", id);
-		#endif
 		return;
 	}
 
@@ -786,24 +787,21 @@ public fwBoxTouch(box, ent) {
 		new iRet;
 		if (!ExecuteForward(fwOnStartTouch, iRet, box, id, szClass)) {
 		}
-		#if DEBUG
+		if (g_bDebugMode)
 			server_print("[DEBUG] Starting touch for box %d, type %s", box, szClass);
-		#endif
 	}
 
 	new iRet;
 	if (!ExecuteForward(fwOnTouch, iRet, box, id, szClass)) {
 	}
-	#if DEBUG
+	if (g_bDebugMode)
 		server_print("[DEBUG] Touching box %d, type %s", box, szClass);
-	#endif
 
 	if (!is_valid_ent(box) || !is_user_alive(id)) {
 		gbTouchActive[id][box] = 0;
 		new iRetStop;
-		#if DEBUG
+		if (g_bDebugMode)
 			server_print("[DEBUG] Stopping touch for box %d", box);
-		#endif
 		if (!ExecuteForward(fwOnStopTouch, iRetStop, box, id, szClass)) {
 		}
 	}
@@ -812,21 +810,19 @@ public fwBoxTouch(box, ent) {
 /*
 public fwStartTouch(box, ent) {
 	if (gbEditorMode) return;
-	#if defined DEBUG
+	if (g_bDebugMode)
 		server_print("[DEBUG] fwStartTouch called for box %d, ent %d", box, ent);
-	#endif
 }
 
 public fwStopTouch(box, ent) {
 	if (gbEditorMode) return;
-	#if defined DEBUG
+	if (g_bDebugMode)
 		server_print("[DEBUG] fwStopTouch called for box %d, ent %d", box, ent);
-	#endif
 }
 
 public fwTouch(box, ent) {
 	if (gbEditorMode) return;
-	#if defined DEBUG
+	if (g_bDebugMode)
 		server_print("[DEBUG] fwTouch called for box %d, ent %d", box, ent);
-	#endif
-}*/
+}
+*/

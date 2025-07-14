@@ -1,36 +1,31 @@
 public mysql_init() {
-	#if defined DEBUG
+	if (g_bDebugMode)
 		log_amx("Attempting to create DbTuple with host: %s, user: %s, db: %s", g_eSettings[SQL_HOST], g_eSettings[SQL_USER], g_eSettings[SQL_DATABASE]);
-	#endif
 	g_iSqlTuple = SQL_MakeDbTuple(g_eSettings[SQL_HOST], g_eSettings[SQL_USER], g_eSettings[SQL_PASSWORD], g_eSettings[SQL_DATABASE]);
 	if (g_iSqlTuple == Empty_Handle) {
-		#if defined DEBUG
+		if (g_bDebugMode)
 			log_amx("Failed to create DbTuple. Check SQL_HOST, SQL_USER, SQL_PASSWORD, and SQL_DATABASE in box.cfg.");
-		#endif
 		return;
 	}
 	SQL_SetAffinity(g_eSettings[SQL_TYPE]);
 
 	new iErrorCode, szSqlError[128], Handle:iSqlConnection = SQL_Connect(g_iSqlTuple, iErrorCode, szSqlError, charsmax(szSqlError));
 	if (iSqlConnection == Empty_Handle) {
-		#if defined DEBUG
+		if (g_bDebugMode)
 			log_amx("Connection failed (%i): %s", iErrorCode, szSqlError);
-		#endif
 		g_iSqlTuple = Empty_Handle;
 		return;
 	} else {
-		#if defined DEBUG
+		if (g_bDebugMode)
 			log_amx("Connection successful.");
-		#endif
 		SQL_FreeHandle(iSqlConnection);
 	}
 }
 
 public DB_LoadMapConfig(const szMapName[]) {
 	if (g_iSqlTuple == Empty_Handle) {
-		#if defined DEBUG
+		if (g_bDebugMode)
 			log_amx("Cannot load from database: Invalid SQL tuple handle. Check database connection.");
-		#endif
 		static iReturn;
 		ExecuteForward(g_fwdDBLoaded, iReturn);
 		return;
@@ -45,9 +40,8 @@ public DB_LoadMapConfig(const szMapName[]) {
 
 public QueryLoadMapConfigHandler(iFailState, Handle:iQuery, szError[], iErrorCode) {
 	if (iFailState) {
-		#if defined DEBUG
+		if (g_bDebugMode)
 			check_and_log_query_error(iFailState, szError, iErrorCode);
-		#endif
 		return;
 	}
 
@@ -69,10 +63,9 @@ public QueryLoadMapConfigHandler(iFailState, Handle:iQuery, szError[], iErrorCod
 
 		BOX_Create(szType, szId, fOrigin, fMins, fMaxs);
 
-		#if defined DEBUG
+		if (g_bDebugMode)
 			log_amx("Box loaded: Type=%s, Id=%s, Origin=(%.2f, %.2f, %.2f), Mins=(%.2f, %.2f, %.2f), Maxs=(%.2f, %.2f, %.2f)",
 				szType, szId, fOrigin[0], fOrigin[1], fOrigin[2], fMins[0], fMins[1], fMins[2], fMaxs[0], fMaxs[1], fMaxs[2]);
-		#endif
 		SQL_NextRow(iQuery);
 	}
 
@@ -81,72 +74,65 @@ public QueryLoadMapConfigHandler(iFailState, Handle:iQuery, szError[], iErrorCod
 }
 
 public DB_SaveMapConfig() {
-    if (g_iSqlTuple == Empty_Handle) {
-        #if defined DEBUG
-            log_amx("Cannot save to database: Invalid SQL tuple handle. Check database connection.");
-        #endif
-        return;
-    }
+	if (g_iSqlTuple == Empty_Handle) {
+		if (g_bDebugMode)
+			log_amx("Cannot save to database: Invalid SQL tuple handle. Check database connection.");
+		return;
+	}
 
-    new szQuery[512];
-    new szMapName[32];
-    get_mapname(szMapName, charsmax(szMapName));
-    strtolower(szMapName);
+	new szQuery[512];
+	new szMapName[32];
+	get_mapname(szMapName, charsmax(szMapName));
+	strtolower(szMapName);
 
-    #if defined DEBUG
-        log_amx("Saving map '%s' with %d zones to database.", szMapName, giZonesP);
-    #endif
+	if (g_bDebugMode)
+		log_amx("Saving map '%s' with %d zones to database.", szMapName, giZonesP);
 
-    if (giZonesP > 0) {
-        formatex(szQuery, charsmax(szQuery), "DELETE FROM box WHERE map = '%s'", szMapName);
-        #if defined DEBUG
-            log_amx("Executing query: %s", szQuery);
-        #endif
-        SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
+	if (giZonesP > 0) {
+		formatex(szQuery, charsmax(szQuery), "DELETE FROM box WHERE map = '%s'", szMapName);
+		if (g_bDebugMode)
+			log_amx("Executing query: %s", szQuery);
+		SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
 
-        new szType[32], szId[32], Float:fOrigin[3], Float:fMins[3], Float:fMaxs[3];
-        for (new i = 0; i < giZonesP; i++) {
-            new ent = giZones[i];
-            if (!pev_valid(ent)) {
-                #if defined DEBUG
-                    log_amx("Invalid entity at index %d, skipping.", i);
-                #endif
-                continue;
-            }
+		new szType[32], szId[32], Float:fOrigin[3], Float:fMins[3], Float:fMaxs[3];
+		for (new i = 0; i < giZonesP; i++) {
+			new ent = giZones[i];
+			if (!pev_valid(ent)) {
+				if (g_bDebugMode)
+					log_amx("Invalid entity at index %d, skipping.", i);
+				continue;
+			}
 
-            pev(ent, PEV_TYPE, szType, charsmax(szType));
-            pev(ent, PEV_ID, szId, charsmax(szId));
-            pev(ent, pev_origin, fOrigin);
-            pev(ent, pev_mins, fMins);
-            pev(ent, pev_maxs, fMaxs);
+			pev(ent, PEV_TYPE, szType, charsmax(szType));
+			pev(ent, PEV_ID, szId, charsmax(szId));
+			pev(ent, pev_origin, fOrigin);
+			pev(ent, pev_mins, fMins);
+			pev(ent, pev_maxs, fMaxs);
 
-            new escaped_type[64], escaped_id[64];
-            SQL_QuoteString(Empty_Handle, escaped_type, charsmax(escaped_type), szType);
-            SQL_QuoteString(Empty_Handle, escaped_id, charsmax(escaped_id), szId);
+			new escaped_type[64], escaped_id[64];
+			SQL_QuoteString(Empty_Handle, escaped_type, charsmax(escaped_type), szType);
+			SQL_QuoteString(Empty_Handle, escaped_id, charsmax(escaped_id), szId);
 
-            formatex(szQuery, charsmax(szQuery),
-                "INSERT INTO box (map, type, box_id, origin_x, origin_y, origin_z, mins_x, mins_y, mins_z, maxs_x, maxs_y, maxs_z) \
-                 VALUES ('%s', '%s', '%s', %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
-                szMapName, escaped_type, escaped_id,
-                fOrigin[0], fOrigin[1], fOrigin[2],
-                fMins[0], fMins[1], fMins[2],
-                fMaxs[0], fMaxs[1], fMaxs[2]);
-            #if defined DEBUG
-                log_amx("Executing query: %s", szQuery);
-            #endif
-            SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
-        }
-    } else {
-        #if defined DEBUG
-            log_amx("No zones to save for map '%s', skipping insertion.", szMapName);
-        #endif
-    }
+			formatex(szQuery, charsmax(szQuery),
+				"INSERT INTO box (map, type, box_id, origin_x, origin_y, origin_z, mins_x, mins_y, mins_z, maxs_x, maxs_y, maxs_z) \
+				 VALUES ('%s', '%s', '%s', %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f, %.2f)",
+				szMapName, escaped_type, escaped_id,
+				fOrigin[0], fOrigin[1], fOrigin[2],
+				fMins[0], fMins[1], fMins[2],
+				fMaxs[0], fMaxs[1], fMaxs[2]);
+			if (g_bDebugMode)
+				log_amx("Executing query: %s", szQuery);
+			SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
+		}
+	} else {
+		if (g_bDebugMode)
+			log_amx("No zones to save for map '%s', skipping insertion.", szMapName);
+	}
 }
 
 public QueryHandler(iFailState, Handle:iQuery, szError[], iErrorCode) {
-	#if defined DEBUG
+	if (g_bDebugMode)
 		check_and_log_query_error(iFailState, szError, iErrorCode);
-	#endif
 }
 
 check_and_log_query_error(iFailState, const szError[], iErrorCode) {

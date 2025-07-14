@@ -57,12 +57,13 @@ BOX_Save()
 		// Add the box object to the array
 		json_array_append_value(jConfigsFile, jBoxObject);
 
-		#if DEBUG
-		log_to_file("json_debug.log", "Box %d saved with Type: %s, Id: %s", i, szValue, szID);
-		log_to_file("json_debug.log", "Origin: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
-		log_to_file("json_debug.log", "Mins: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
-		log_to_file("json_debug.log", "Maxs: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
-		#endif
+		if (g_bDebugMode)
+		{
+			log_to_file("json_debug.log", "Box %d saved with Type: %s, Id: %s", i, szValue, szID);
+			log_to_file("json_debug.log", "Origin: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
+			log_to_file("json_debug.log", "Mins: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
+			log_to_file("json_debug.log", "Maxs: X: %.2f, Y: %.2f, Z: %.2f", fOrigin[0], fOrigin[1], fOrigin[2]);
+		}
 	}
 
 	// Save the JSON array to the file
@@ -92,17 +93,15 @@ BOX_Load()
 			new szType[32];
 			json_object_get_string(iBoxObject, "Type", szType, charsmax(szType));
 
-			#if DEBUG
-			log_to_file("json_debug.log", "Box %d loaded with Type: %s", i, szType);
-			#endif
+			if (g_bDebugMode)
+				log_to_file("json_debug.log", "Box %d loaded with Type: %s", i, szType);
 
 			// Retrieve and log the "Id" value
 			new szId[32];
 			json_object_get_string(iBoxObject, "Id", szId, charsmax(szId));
 			
-			#if DEBUG
-			log_to_file("json_debug.log", "Id value: %s", szId);
-			#endif
+			if (g_bDebugMode)
+				log_to_file("json_debug.log", "Id value: %s", szId);
 			
 			// Retrieve and log the "Origin" values
 			new JSON:jOrigin = json_object_get_value(iBoxObject, "Origin");
@@ -112,11 +111,12 @@ BOX_Load()
 				fOrigin[1] = json_object_get_real(jOrigin, "Y");
 				fOrigin[2] = json_object_get_real(jOrigin, "Z");
 
-				#if DEBUG
-				log_to_file("json_debug.log", "Origin X: %.2f", fOrigin[0]);
-				log_to_file("json_debug.log", "Origin Y: %.2f", fOrigin[1]);
-				log_to_file("json_debug.log", "Origin Z: %.2f", fOrigin[2]);
-				#endif
+				if (g_bDebugMode)
+				{
+					log_to_file("json_debug.log", "Origin X: %.2f", fOrigin[0]);
+					log_to_file("json_debug.log", "Origin Y: %.2f", fOrigin[1]);
+					log_to_file("json_debug.log", "Origin Z: %.2f", fOrigin[2]);
+				}
 			}
 			
 			// Retrieve and log the "Mins" values
@@ -127,11 +127,12 @@ BOX_Load()
 				fMins[1] = json_object_get_real(jMins, "Y");
 				fMins[2] = json_object_get_real(jMins, "Z");
 
-				#if DEBUG
-				log_to_file("json_debug.log", "Mins X: %.2f", fMins[0]);
-				log_to_file("json_debug.log", "Mins Y: %.2f", fMins[1]);
-				log_to_file("json_debug.log", "Mins Z: %.2f", fMins[2]);
-				#endif
+				if (g_bDebugMode)
+				{
+					log_to_file("json_debug.log", "Mins X: %.2f", fMins[0]);
+					log_to_file("json_debug.log", "Mins Y: %.2f", fMins[1]);
+					log_to_file("json_debug.log", "Mins Z: %.2f", fMins[2]);
+				}
 			}
 			
 			// Retrieve and log the "Maxs" values
@@ -142,16 +143,17 @@ BOX_Load()
 				fMaxs[1] = json_object_get_real(jMaxs, "Y");
 				fMaxs[2] = json_object_get_real(jMaxs, "Z");
 
-				#if DEBUG
-				log_to_file("json_debug.log", "Maxs X: %.2f", fMaxs[0]);
-				log_to_file("json_debug.log", "Maxs Y: %.2f", fMaxs[1]);
-				log_to_file("json_debug.log", "Maxs Z: %.2f", fMaxs[2]);
-				#endif
+				if (g_bDebugMode)
+				{
+					log_to_file("json_debug.log", "Maxs X: %.2f", fMaxs[0]);
+					log_to_file("json_debug.log", "Maxs Y: %.2f", fMaxs[1]);
+					log_to_file("json_debug.log", "Maxs Z: %.2f", fMaxs[2]);
+				}
 			}
 			
-			#if DEBUG
-			log_to_file("json_debug.log", "---------------------------");
-			#endif
+			if (g_bDebugMode)
+				log_to_file("json_debug.log", "---------------------------");
+			
 			// Create the box using the loaded data
 			BOX_Create(szType, szId, fOrigin, fMins, fMaxs);
 		}
@@ -161,8 +163,7 @@ BOX_Load()
 	}
 	else
 	{
-		#if DEBUG
-		log_to_file("json_debug.log", "Failed to parse JSON file or file is not an array.");
-		#endif
+		if (g_bDebugMode)
+			log_to_file("json_debug.log", "Failed to parse JSON file or file is not an array.");
 	}
 }

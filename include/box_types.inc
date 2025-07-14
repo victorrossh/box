@@ -10,7 +10,6 @@ new giTypes = -1;
 
 new Trie:gTypes; 
 
-
 Types_LoadList()
 {
 	gTypes = TrieCreate();
@@ -22,16 +21,15 @@ Types_LoadList()
 	Types_LoadFromFile(gszConfigFile);
  
 	while(next_file(dp, gszConfigFile[giConfigFile], charsmax(gszConfigFile)))
-	{	
+	{   
 		Types_LoadFromFile(gszConfigFile);
 	}
- 
 	close_dir(dp);
 }
+
 Types_LoadFromFile(const szFile[])
 {
-	if(szFile[giConfigFile] == '.') 
-		return;
+	if(szFile[giConfigFile] == '.') return;
 	
 	Types_Load(szFile)
 }
@@ -51,10 +49,8 @@ Types_Load(const filePath[])
 		giTypes++;
 
 		json_object_get_string(jTypeFile, "type", szType, charsmax(szType));
-	#if DEBUG
-		log_to_file("json_debug.log", "Type value: %s", szType);
-	#endif
-
+		if (g_bDebugMode)
+			log_to_file("json_debug.log", "Type value: %s", szType);
 
 		format(gszTypeClass[giTypes], charsmax(gszTypeClass[]), szType);
 		TrieSetCell(gTypes, gszTypeClass[giTypes], giTypes );
@@ -72,29 +68,31 @@ Types_Load(const filePath[])
 			giTypeColors[giTypes][1] = g;
 			giTypeColors[giTypes][2] = b;
 
-		#if DEBUG
-			// Log color values
-			log_to_file("json_debug.log", "Color R: %d", r);
-			log_to_file("json_debug.log", "Color G: %d", g);
-			log_to_file("json_debug.log", "Color B: %d", b);
-		#endif
+			if (g_bDebugMode)
+			{
+				// Log color values
+				log_to_file("json_debug.log", "Color R: %d", r);
+				log_to_file("json_debug.log", "Color G: %d", g);
+				log_to_file("json_debug.log", "Color B: %d", b);
+			}
 		}
-	#if DEBUG
 		else
 		{
-			log_to_file("json_debug.log", "Failed to retrieve color data for %s", szType);
+			if (g_bDebugMode)
+				log_to_file("json_debug.log", "Failed to retrieve color data for %s", szType);
 		}
-		log_to_file("json_debug.log", "---------------------------");
-	#endif
+		if (g_bDebugMode)
+			log_to_file("json_debug.log", "---------------------------");
+
 		// Free the JSON object memory
 		json_free(jTypeFile);
 	}
 	else
 	{
-		log_to_file("json_debug.log", "Failed to parse JSON file or file is not an object.");
+		if (g_bDebugMode)
+			log_to_file("json_debug.log", "Failed to parse JSON file or file is not an object.");
 	}
 }
-
 
 getTypeId(const szNetName[])
 {
@@ -102,12 +100,11 @@ getTypeId(const szNetName[])
 	TrieGetCell(gTypes, szNetName, iType);
 	
 	return iType;
-	
 }
+
 getTypeColor(ent, iColor[3])
 {
-	if(!pev_valid(ent))
-		return 0;
+	if(!pev_valid(ent)) return 0;
 		
 	new szNetName[32];
 	pev(ent, PEV_TYPE, szNetName, 31);
@@ -121,7 +118,6 @@ getTypeColor(ent, iColor[3])
 	}
 	else
 	{
-		
 		iColor[0] = 50;
 		iColor[1] = 255;
 		iColor[2] = 50;
