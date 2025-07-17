@@ -1,0 +1,15 @@
+CREATE TABLE box (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	map VARCHAR(32) NOT NULL,
+	type VARCHAR(32) NOT NULL,
+	box_id VARCHAR(32) NOT NULL,
+	origin_x FLOAT NOT NULL,
+	origin_y FLOAT NOT NULL,
+	origin_z FLOAT NOT NULL,
+	mins_x FLOAT NOT NULL,
+	mins_y FLOAT NOT NULL,
+	mins_z FLOAT NOT NULL,
+	maxs_x FLOAT NOT NULL,
+	maxs_y FLOAT NOT NULL,
+	maxs_z FLOAT NOT NULL
+);

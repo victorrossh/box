@@ -1,19 +1,76 @@
 [en]
-CREATE_BOX = Create
-REMOVE_BOX = Remove last used
-BOX_CLASS = Kind
-GOTO_LAST = Go to last used
-USE_NEAREST = Use the nearest box
-BOX_EXIT = Exit
-THERE_IS_NO = There is no boxes here
-UNIQUE = Unique ID: %s
+
+CREATE_BOX = \wCreate
+REMOVE_BOX = \wRemove last used
+BOX_CLASS = \wKind
+GOTO_LAST = \wGo to last used
+USE_NEAREST = \wUse the nearest box
+BOX_EXIT = \wExit
+THERE_IS_NO = ^4[FWO] ^1There are no boxes on this map.
+UNIQUE = \wUnique ID: %s
+
+[bp]
+
+CREATE_BOX = \wCriar
+REMOVE_BOX = \wRemover último usado
+BOX_CLASS = \wTipo
+GOTO_LAST = \wIr para último usado
+USE_NEAREST = \wUsar caixa mais próxima
+BOX_EXIT = \wSair
+THERE_IS_NO = ^4[FWO] ^1Não existe nenhuma box nesse mapa.
+UNIQUE = \wID Único: %s
+
+[ro]
+
+CREATE_BOX = \wCreează
+REMOVE_BOX = \wȘterge ultimul folosit
+BOX_CLASS = \wTip
+GOTO_LAST = \wMergi la ultimul folosit
+USE_NEAREST = \wFolosește cutia cea mai apropiată
+BOX_EXIT = \wIeșire
+THERE_IS_NO = ^4[FWO] ^1Nu există nicio cutie pe această hartă.
+UNIQUE = \wID Unic: %s
+
+[pt]
+
+CREATE_BOX = \wCriar
+REMOVE_BOX = \wRemover último usado
+BOX_CLASS = \wTipo
+GOTO_LAST = \wIr para último usado
+USE_NEAREST = \wUsar caixa mais próxima
+BOX_EXIT = \wSair
+THERE_IS_NO = ^4[FWO] ^1Não existe nenhuma box nesse mapa.
+UNIQUE = \wID Único: %s
+
+[es]
+
+CREATE_BOX = \wCrear
+REMOVE_BOX = \wEliminar último usado
+BOX_CLASS = \wTipo
+GOTO_LAST = \wIr al último usado
+USE_NEAREST = \wUsar caja más cercana
+BOX_EXIT = \wSalir
+THERE_IS_NO = ^4[FWO] ^1No existe ninguna caja en este mapa.
+UNIQUE = \wID Único: %s
 
 [pl]
-CREATE_BOX = Stworz
-REMOVE_BOX = Usun ostatnio edytowany
-BOX_CLASS = Klasa
-GOTO_LAST = Idz do ostatnio edytowanego
-USE_NEAREST = Edytuj najblizszy
-BOX_EXIT = Wyjdz
-THERE_IS_NO = Nie ma zadnych stref
-UNIQUE = Unikatowe ID: %s
+
+CREATE_BOX = \wStworz
+REMOVE_BOX = \wUsun ostatnio edytowany
+BOX_CLASS = \wKlasa
+GOTO_LAST = \wIdz do ostatnio edytowanego
+USE_NEAREST = \wEdytuj najblizszy
+BOX_EXIT = \wWyjdz
+THERE_IS_NO = ^4[FWO] ^1Nie ma zadnych stref.
+UNIQUE = \wUnikatowe ID: %s
+
+[ru]
+
+CREATE_BOX = \wСоздать
+REMOVE_BOX = \wУдалить последний использованный
+BOX_CLASS = \wТип
+GOTO_LAST = \wПерейти к последнему использованному
+USE_NEAREST = \wИспользовать ближайшую коробку
+BOX_EXIT = \wВыход
+THERE_IS_NO = ^4[FWO] ^1На этой карте нет коробок.
+UNIQUE = \wУникальный ID: %s
