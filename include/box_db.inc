@@ -88,12 +88,12 @@ public DB_SaveMapConfig() {
 	if (g_bDebugMode)
 		log_amx("Saving map '%s' with %d zones to database.", szMapName, giZonesP);
 
-	if (giZonesP > 0) {
-		formatex(szQuery, charsmax(szQuery), "DELETE FROM box WHERE map = '%s'", szMapName);
+	formatex(szQuery, charsmax(szQuery), "DELETE FROM box WHERE map = '%s'", szMapName);
 		if (g_bDebugMode)
 			log_amx("Executing query: %s", szQuery);
-		SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
+	SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
 
+	if (giZonesP > 0) {
 		new szType[32], szId[32], Float:fOrigin[3], Float:fMins[3], Float:fMaxs[3];
 		for (new i = 0; i < giZonesP; i++) {
 			new ent = giZones[i];

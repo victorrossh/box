@@ -4,6 +4,8 @@
 
 BOX_Save()
 {
+	delete_file(gszConfigDirPerMap);
+	
 	if (giZonesP == 0) return;
 
 	new szValue[32];
