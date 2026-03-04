@@ -89,8 +89,8 @@ public DB_SaveMapConfig() {
 		log_amx("Saving map '%s' with %d zones to database.", szMapName, giZonesP);
 
 	formatex(szQuery, charsmax(szQuery), "DELETE FROM box WHERE map = '%s'", szMapName);
-		if (g_bDebugMode)
-			log_amx("Executing query: %s", szQuery);
+	if (g_bDebugMode)
+		log_amx("Executing query: %s", szQuery);
 	SQL_ThreadQuery(g_iSqlTuple, "QueryHandler", szQuery);
 
 	if (giZonesP > 0) {

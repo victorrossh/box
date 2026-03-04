@@ -12,6 +12,7 @@
 # Vendor directory for dependencies
 dependencies/
 bin/
+Box/
 
 # Dependency versions lockfile
 pawn.lock
